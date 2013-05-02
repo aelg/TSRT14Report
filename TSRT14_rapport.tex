@@ -132,7 +132,7 @@ The mean of the standard deviatione is $0.0613$ meters, which can be regarded as
 
 
 \newpage
-\section{Sensor modelling}
+\section{Sensor modeling}
 \label{Sensor modeling}
 To do localisation and tracking, a model must be used to process the data in the datasets.
 The algorithms used in this laboration need a function that maps the state of the robot to the measurments that has been recorded.
@@ -171,7 +171,7 @@ In the tasks we have used both a model with all these differences and
 a model with one microphone as a reference and only the differencies of the other microphones with respect to the reference microphone.
 Using the difference means that the measurment $\bar{y}$ can't be used instead a new measurment $\tilde{y}$ is constructed by taking pairwise differencies of $\bar{y}$.
 The measurment noise in this case can be estimated by taking the difference of the stochastic variables describing the independent measurment noise for each microphone.
-For simplicity this new measurment noise is assumed to be independent with variance given by the sum of 
+For simplicity this new measurment noise is assumed to be independent with the variance given by the sum of the variances of the two microphones used to create each of the new measurments.
 In the first case the model is
 
 \[
@@ -204,6 +204,19 @@ In the first case the model is
 This can also be generated with \emph{exsensor}.
 \begin{verbatim}
 exsensor('tdoa2', 7, 1, 2);
+nn = factorial(size(tphat, 2))/(2*factorial(size(tphat, 2)-2));
+yy = zeros(size(tphat, 1), nn);
+for m = 1:size(tphat, 1)
+    y = [];
+    for k = 1:6,
+        for l = k+1:7,
+            y = [y tphat(m, k) - tphat(m,l)];
+        end
+    end
+    yy(m,:) = y;
+end
+y = sig(yy, 2);
+end
 \end{verbatim}
 The model with microphone 1 as the reference will be
 \[
@@ -227,6 +240,15 @@ for i = 2:7,
 end
 h = [h ']'];
 sm = sensormod(h, [2 0 6 14])
+yy = zeros(size(tphat, 1), 6);
+for k = 1:size(tphat, 1)
+    y = [];
+    for l = 2:7,
+        y = [y tphat(k, 1) - tphat(k,l)];
+    end
+    yy(k,:) = y;
+end
+y = sig(yy, 2);
 \end{verbatim}
 \newpage
 \section{Configuration analysis}
