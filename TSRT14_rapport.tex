@@ -216,7 +216,13 @@ for m = 1:size(tphat, 1)
     yy(m,:) = y;
 end
 y = sig(yy, 2);
+yy_var = [];
+for k = 1:6,
+    for l = k+1:7,
+        yy_var = [yy_var mic_var(l) + mic_var(k)];
+    end
 end
+sm.pe = repmat(yy_var, sm.nn(3), 1).*eye(sm.nn(3));
 \end{verbatim}
 The model with microphone 1 as the reference will be
 \[
@@ -249,10 +255,67 @@ for k = 1:size(tphat, 1)
     yy(k,:) = y;
 end
 y = sig(yy, 2);
+yy_var = [];
+for l = 2:7,
+    yy_var = [yy_var mic_var(l) + mic_var(1)];
+end
+sm.pe = repmat(yy_var, sm.nn(3), 1).*eye(sm.nn(3));
 \end{verbatim}
 \newpage
 \section{Configuration analysis}
 \label{Configuration analysis}
+A configuration analysis is done to see which of the microphone configurations is better.
+Two methods are used.
+
+The first method is to calculate the NLS loss function $V(\bar{x}) = \bar{y} - h(\bar{x}))^TR^{-1}(\bar{y} - h(\bar{x}))$ for one of the measurments.
+The NLS loss function is calculated for every point in a grid over the track and then plotted with a contour plot.
+A distinct minimum would indicate a good configuration.
+The result for the first configuration can be seen in figure \ref{nls_good}.
+The result for the second configuration can be seen in figure \ref{nls_bad}.
+The first configuration has a good looking shape that circle the position where the robot probably is.
+The second configuration does not have a good minimum the loss function seems to bleed out outside the track.
+
+The second method used is the Cramer-Rao lower bound. This is a function which gives the lower bound for the root mean square error (RMSE) of a sensor network.
+This is a lower bound for how good the approximation can be using the sensors present given the true position of the robot is in a point of the track.
+The result for the first configuration can be seen in figure \ref{crlb_good} and the second in figure \ref{crlb_bad}.
+The unit in the plots are meters.
+Here the first configuration has very small values all over the track, the RMSE is below 1 dm everywhere.
+The second configuration is a lot worse. Some parts of the track where the robot will be going is as high as 1 meter.
+
+The conclusion from this part is that the first configuration is a lot better than the second.
+From now on only the first configuration will be used.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{nls_good.png}
+  \caption{NLS loss function for the first configuration.}
+  \label{nls_good}
+  \end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{nls_bad.png}
+  \caption{NLS loss function for the second configuration.}
+  \label{nls_bad}
+  \end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{crlb_good.png}
+  \caption{Cramer-Rao lower bound for the first configuration.}
+  \label{crlb_good}
+  \end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{crlb_bad.png}
+  \caption{Cramer-Rao lower bound for the second configuration.}
+  \label{crlb_bad}
+  \end{center}
+\end{figure}
 
 
 \newpage
