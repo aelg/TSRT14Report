@@ -84,7 +84,6 @@ This will give large peaks where the pulses were recorded.
 \label{Tasks}
 The laboration assignment consisted of several task that needed to be completed. This is a description of how they were completed.
 
-\newpage
 \section{Calibration}
 \label{Calibration}
 The calibration setup described in chapter \ref{Data gathering} in figure \ref{calibtration_setup} produced data which contained the arrival time at each time instant for each sensor. To determine the accuracy of the measurement, the bias and standard deviation is needed. First the error is calculated. Example code for one sensor is shown in the following matlab code. 
@@ -121,11 +120,9 @@ end
 \end{verbatim}
 This code also plotts a pdfclass distribution into the same graph for comparison. It also determines the bias and standard deviation for each sensor. 
 \begin{figure}[H]
-\begin{center}
   \label{histogram}
-  \includegraphics[width = 350pt]{histogram.png}
+  \includegraphics[width = 400pt]{histogram.png}
   \caption{Histogram and pdfclass distribution for each sensor}
-  \end{center}
 \end{figure}
 The mean of the standard deviatione is $0.0613$ meters, which can be regarded as the accuracy of the estimation.
 
@@ -261,6 +258,9 @@ for l = 2:7,
 end
 sm.pe = repmat(yy_var, sm.nn(3), 1).*eye(sm.nn(3));
 \end{verbatim}
+
+
+
 \newpage
 \section{Configuration analysis}
 \label{Configuration analysis}
@@ -318,9 +318,40 @@ From now on only the first configuration will be used.
 \end{figure}
 
 
+
 \newpage
 \section{Localisation}
 \label{Localisationg}
+
+\subsection{NLS using Gauss-Newton}
+\label{lacalisation Gauss}
+To compute the estimate target position for each time instant, the non-linear least square model with the Gauss-Newton algorithm is used here. The matlab code to compute the estimates is given below.
+\begin{verbatim}
+tphat = tphat;
+for i = 1:length(y.y)-1
+    y_k = sig(tphat(i,:),FS);
+    xhat = nls(sm, y_k, 'thmask',zeros(1,sm.nn(4)));
+    disp(i)
+    est_target_pos(:,i)=xhat.x0(1:2);
+    sm.x0=[xhat.x0(1:2); xhat.x0(3)+bias];
+    display(xhat.x0)
+end
+SFlabCompEstimGroundTruth(est_target_pos, sensor_position');
+\end{verbatim}
+Using the time measurements and initial values contained in the sensor model, we can produce the output shown in the figure below.
+\begin{figure}[H]
+  \label{NLS_target_est}
+  \includegraphics[width = 350pt]{NLS_target_est.png}
+  \caption{NLS target estimation using Gauss-Newton}
+\end{figure}
+
+
+
+\newpage
+\subsection{TDOA approach}
+\label{TDOA approach}
+
+
 
 \newpage
 \section{Tracking}
