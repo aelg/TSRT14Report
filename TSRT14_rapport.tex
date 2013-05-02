@@ -11,30 +11,10 @@
 \usepackage{color}
 \usepackage{float}
 \usepackage{url}
+\usepackage[numbered]{mcode}
 
-
-% Formler
-\newcommand{\gaspedal}{\beta_{ped}}
-\newcommand{\throttlewinkel}{\alpha_{th}}
-\newcommand{\throttlewinkelacc}{\dot{\alpha}_{th}}
-\newcommand{\throttledelay}{\tau_{th}}
-\newcommand{\AFs}{\lambda}
-\newcommand{\massenstrom}{\dot{m}}
-\newcommand{\luftmassenstromat}{\dot{m}_{at}}
-\newcommand{\luftmassenstromac}{\dot{m}_{ac}}
-\newcommand{\etalvol}{\eta_{vol}}
-\newcommand{\zylindergesamtvolumen}{V_D}
-\newcommand{\throttletemp}{T_{bef,th}}
-\newcommand{\injektierterbrennstoffmassenstrom}{\dot{m}_{fi}}
-\newcommand{\brennstoffmasse}{m_f}
-\newcommand{\brennstoffmassenstrom}{\dot{m}_{fc}}
-\newcommand{\effektiveflache}{A_{eff}}
-\newcommand{\etatildeign}{{\tilde \eta}_{ig} ( \lambda_{c}, \theta_{ign}, r_{c}, N_{e}, V_{d} )}
-
-
-% Sources
-
-% ---Title page ---
+\lstset{extendedchars=\true}
+\lstset{inputencoding=ansinew}
 
 
 
@@ -48,8 +28,8 @@
 \author{Group 12}
 \maketitle
 
-\abstract{This is a report for on of the laboration assignments in the course Sensor fusion (TSRT14) at LiTH.
-  It consists of estimation and tracking och location for a robot that is moving in a audio sensor network.
+\abstract{This is a report for one of the laboration assignments in the course Sensor fusion (TSRT14) at LiTH.
+  It consists of estimation, tracking and location for a robot that is moving in a acoustic sensor network.
 Several different algorithms are used and compared to each other.}
 
 % ---Innehållsförteckning---
@@ -61,15 +41,22 @@ Several different algorithms are used and compared to each other.}
 The data that is used in this report was gathered during a session at Laboteket.
 The setup was a robot that followed a path around a track that was about one meter in diameter.
 As the robot went around the track it emitted a pulse two times per second.
-The sensor that were used was 7 microphones that could be placed anywhere around the track.
+The sensors that were used were 7 microphones, that could be placed anywhere around the track.
 Three datasets were collected.
 First a calibration set. This was collected by placing all the microphones on the same distant from the robot.
 This was achived by placing all the microphones on a small segement of a circle with the robot in the center.
-The robot was then setup to just emit the pulses and stay still.
+The robot was then setup to just emit the pulses and stay still. The setup is displayed in figure \ref{calibtration_setup} below.
+\begin{figure}[H]
+\begin{center}
+  \label{calibtration_setup}
+  \includegraphics[width = 100pt]{calibration_setup.png}
+  \caption{Calibration setup}
+  \end{center}
+\end{figure}
 
 After this was done the robot was set up to drive around the track while the microphones recorded data.
 Two different setup were used. The placement of the microphones can be seen in Figure \ref{good_setup} and \ref{bad_setup}.
-The first setup up was choosen to have microphones spread as even as possible around the track.
+The first setup up was chosen to have microphones spread as even as possible around the track.
 This will make the arrival times at the microphones as different as possible.
 In the second setup the microphones are closer together and there should be less difference between the arrival time of different microphones.
 
@@ -100,9 +87,52 @@ The laboration assignment consisted of several task that needed to be completed.
 \newpage
 \section{Calibration}
 \label{Calibration}
+The calibration setup described in chapter \ref{Data gathering} in figure \ref{calibtration_setup} produced data which contained the arrival time at each time instant for each sensor. To determine the accuracy of the measurement, the bias and standard deviation is needed. First the error is calculated. Example code for one sensor is shown in the following matlab code. 
+\begin{verbatim}
+e = tphat(:,1) - mean(tphat, 2);
+\end{verbatim}
+The same has to be done for the other 6 sensors. The meaning of this is that the mean of the seven sensors at one time instant should be close to the actual value of the arrival time. Since they are placed at en equal distance the arrival time should be the same, but since they are not, we need to compare the measurements to the mean of the sensors, which produces the error.
+
+To compare the empirical probability density function of the measurement noise with a pdfclass distribution, we need to compute a normalized histogram first. This can be achieved using the following code.
+\begin{verbatim}
+bias = [];
+std_deviation = [];
+P = [];
+mu = [];
+
+figure()
+for i = 1:nr_of_sensors
+    [N,l] = hist(e(:,i),20);
+    Wb = l(2)-l(1); %bin width
+    Ny = length(e(:,i)); %nr of samples
+    subplot(2,4,i)
+    bar(l,N/(Ny*Wb));
+    d = i+1;
+    title(sprintf( 'Sensor %d', d));
+    hold on
+    pe_i = ndist(mean(e(:,i)), var(e(:,i)));
+    mu = [mu; pe_i.mu];
+    P = [P pe_i.P];
+    plot(pe_i);
+    hold off
+    bias = [bias mean(e(:,i))]; % [m] Bias för alla sensorer
+    std_deviation = [std_deviation sqrt(var(e(:,i)))];
+end
+\end{verbatim}
+This code also plotts a pdfclass distribution into the same graph for comparison. It also determines the bias and standard deviation for each sensor. 
+\begin{figure}[H]
+\begin{center}
+  \label{histogram}
+  \includegraphics[width = 350pt]{histogram.png}
+  \caption{Histogram and pdfclass distribution for each sensor}
+  \end{center}
+\end{figure}
+The mean of the standard deviatione is $0.0613$ meters, which can be regarded as the accuracy of the estimation.
+
+
 
 \newpage
-\section{Sensor modeling}
+\section{Sensor modelling}
 \label{Sensor modeling}
 To do localisation and tracking, a model must be used to process the data in the datasets.
 The algorithms used in this laboration need a function that maps the state of the robot to the measurments that has been recorded.
@@ -214,6 +244,9 @@ sm = sensormod(h, [2 0 6 14])
 \newpage
 \section{Sensitivity analysis}
 \label{Sensitivity analysis}
+
+\chapter{Appendix}
+% .m code
 
 \end{document}
 
