@@ -257,6 +257,27 @@ y = sig(yy, 2);
 \section{Localisation}
 \label{Localisationg}
 
+\subsection{NLS using Gauss-Newton}
+\label{lacalisation Gauss}
+To compute the estimate target position for each time instant, the non-linear least square model with the Gauss-Newton algorithm is used here. The matlab code to compute the estimates is given below.
+\begin{verbatim}
+tphat = tphat;
+for i = 1:length(y.y)-1
+    y_k = sig(tphat(i,:),FS);
+    xhat = nls(sm, y_k, 'thmask',zeros(1,sm.nn(4)));
+    disp(i)
+    est_target_pos(:,i)=xhat.x0(1:2);
+    sm.x0=[xhat.x0(1:2); xhat.x0(3)+bias];
+    display(xhat.x0)
+end
+SFlabCompEstimGroundTruth(est_target_pos, sensor_position');
+\end{verbatim}
+
+\subsection{TDOA approach}
+\label{TDOA approach}
+
+
+
 \newpage
 \section{Tracking}
 \label{Tracking}
