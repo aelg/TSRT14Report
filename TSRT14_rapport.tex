@@ -248,9 +248,13 @@ for k = 1:size(tphat, 1)
 end
 y = sig(yy, 2);
 \end{verbatim}
+
+
+
 \newpage
 \section{Configuration analysis}
 \label{Configuration analysis}
+
 
 
 \newpage
@@ -272,7 +276,16 @@ for i = 1:length(y.y)-1
 end
 SFlabCompEstimGroundTruth(est_target_pos, sensor_position');
 \end{verbatim}
+Using the time measurements and initial values contained in the sensor model, we can produce the output shown in the figure below.
+\begin{figure}[H]
+  \label{NLS_target_est}
+  \includegraphics[width = 350pt]{NLS_target_est.png}
+  \caption{NLS target estimation using Gauss-Newton}
+\end{figure}
 
+
+
+\newpage
 \subsection{TDOA approach}
 \label{TDOA approach}
 
