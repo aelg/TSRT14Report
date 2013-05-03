@@ -48,9 +48,9 @@ This was achived by placing all the microphones on a small segement of a circle 
 The robot was then setup to just emit the pulses and stay still. The setup is displayed in figure \ref{calibtration_setup} below.
 \begin{figure}[H]
 \begin{center}
-  \label{calibtration_setup}
   \includegraphics[width = 100pt]{calibration_setup.png}
   \caption{Calibration setup}
+  \label{calibtration_setup}
   \end{center}
 \end{figure}
 
@@ -68,15 +68,15 @@ The processing of the recordings are done by correlating the recorded signal wit
 This will give large peaks where the pulses were recorded.
 
 \begin{figure}[!h]
-  \label{good_setup}
   \includegraphics[scale=0.9]{microphone_pos_good.png}
   \caption{Microphone setup one.}
+  \label{good_setup}
 \end{figure}
 
 \begin{figure}[!h]
-  \label{bad_setup}
   \includegraphics[scale=0.9]{microphone_pos_bad.png}
   \caption{Microphone setup two.}
+  \label{bad_setup}
 \end{figure}
 
 \newpage
@@ -120,9 +120,9 @@ end
 \end{verbatim}
 This code also plotts a pdfclass distribution into the same graph for comparison. It also determines the bias and standard deviation for each sensor. 
 \begin{figure}[H]
-  \label{histogram}
   \includegraphics[width = 400pt]{histogram.png}
   \caption{Histogram and pdfclass distribution for each sensor}
+  \label{histogram}
 \end{figure}
 The mean of the standard deviatione is $0.0613$ meters, which can be regarded as the accuracy of the estimation.
 
@@ -340,9 +340,9 @@ SFlabCompEstimGroundTruth(est_target_pos, sensor_position');
 \end{verbatim}
 Using the time measurements and initial values contained in the sensor model, we can produce the output shown in the figure below.
 \begin{figure}[H]
-  \label{NLS_target_est}
   \includegraphics[width = 350pt]{NLS_target_est.png}
   \caption{NLS target estimation using Gauss-Newton}
+  \label{NLS_target_est}
 \end{figure}
 
 
@@ -369,16 +369,16 @@ By setting up a matrix with the pairwise differences of the sensor measurements 
     plot(shat, 'conf', 90)
  \end{verbatim}
  \begin{figure}[H]
-   \label{TDOA_target_est1}
    \includegraphics[width = 350pt]{TDAO_target_est1.png}
    \caption{Pairwise measurement differences using TDOA2 showing confidence interval}
+   \label{TDOA_target_est1}
  \end{figure}
  \begin{figure}[H]
-   \label{TDOA_target_est2}
-   \includegraphics[width = 350pt]{TDAO_target_est1.png}
+   \includegraphics[width = 350pt]{TDAO_target_est2.png}
    \caption{Pairwise measurement differences using TDOA2}
+   \label{TDOA_target_est2}
  \end{figure}
-
+Figure \ref{TDOA_target_est2} compared to figure \ref{NLS_target_est} yields that the TDOA method with the pairwise differences gives a better estimate of the target positions. 
 
 
 \newpage
