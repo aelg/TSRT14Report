@@ -503,7 +503,59 @@ The sensor noise variance was had to be adjusted to be a little bigger than esti
 \newpage
 \section{Sensitivity analysis}
 \label{Sensitivity analysis}
+When using models there is always the risk of having a model that does not correspond to what actually happens.
+In this experiment the location of the microphones is one factor that might be incorrect.
+These positions are measured by hand it is interesting to examine how faulty measurements will affect the result of the estimations.
+Since the position of the microphones were measured using a simple ruler there is probably some error in the measurements.
+The size of this error is probably a few centimeters.
+The standard deviation of the pulse arrival times calculated in the calibration task were about 6 centimeters (if they are modified to correspond to lengths).
+This means that the error of the measurements is about the same size or probably smaller than the standard deviation of the pulse detection.
 
+To see how noise in the placement of the sensors affect the estimations additive gaussian noise was added to the positions of the sensors in the sensor model.
+When the standard deviation of the noise is 5 cm the effect on the estimation is small, at around 10 cm the estimations get worse.
+Figure \ref{sens_5} and figure \ref{sens_10} shows how the noise affect the constant velocity motion model with the particle filter.
+This model uses one sensor as reference and uses the differencies to the other sensors as measurements.
+This makes it more sensitive to errors in the reference sensor.
+When the reference sensor is moved 10 cm the the error can be seen in the estimations (figure \ref{ref_10}.
+On the other hand if a sensor that is not the reference is moved 50 cm the result is a bit wrong,
+but not much compared to if the reference microphone is moved in the same way.
+The difference can be seen in figure \ref{ref_50} and \ref{diff_50}
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{sens_std05.png}
+  \caption{Standard deviation of 5 cm added to sensor positions.}
+  \label{sens_5}
+  \end{center}
+\end{figure}
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{sens_std10.png}
+  \caption{Standard deviation of 10 cm added to sensor positions.}
+  \label{sens_10}
+  \end{center}
+\end{figure}
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{sens_ref10.png}
+  \caption{Reference microphone moved 10 cm.}
+  \label{ref_10}
+  \end{center}
+\end{figure}
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{sens_ref50.png}
+  \caption{Reference microphone moved 50 cm.}
+  \label{ref_50}
+  \end{center}
+\end{figure}
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{sens_diff50.png}
+  \caption{Difference microphone moved 50 cm.}
+  \label{diff_50}
+  \end{center}
+\end{figure}
 \newpage
 \section{Conclusion}
 \label{Conclusion}
