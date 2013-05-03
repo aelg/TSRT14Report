@@ -45,7 +45,7 @@
 \maketitle
 
 \abstract{This is a report for one of the laboration assignments in the course Sensor fusion (TSRT14) at LiTH.
-  It consists of estimation, tracking and location for a robot that is moving in a acoustic sensor network.
+  It consists of estimation, tracking and localisation of a robot which is moving in an acoustic sensor network.
 Several different algorithms are used and compared to each other.}
 
 % ---Innehållsförteckning---
@@ -55,11 +55,11 @@ Several different algorithms are used and compared to each other.}
 \chapter{Data gathering}
 \label{Data gathering}
 The data that is used in this report was gathered during a session at Laboteket.
-The setup was a robot that followed a path around a track that was about one meter in diameter.
+The setup was a robot that followed a path around a track which was about one meter in diameter.
 As the robot went around the track it emitted a pulse two times per second.
 The sensors that were used were 7 microphones, that could be placed anywhere around the track.
 Three datasets were collected.
-First a calibration set. This was collected by placing all the microphones on the same distant from the robot.
+First a calibration set. This was collected by placing all the microphones at the same distance from the robot.
 This was achived by placing all the microphones on a small segement of a circle with the robot in the center.
 The robot was then setup to just emit the pulses and stay still. The setup is displayed in figure \ref{calibtration_setup} below.
 \begin{figure}[H]
@@ -98,7 +98,7 @@ This will give large peaks where the pulses were recorded.
 \newpage
 \chapter{Tasks}
 \label{Tasks}
-The laboration assignment consisted of several task that needed to be completed. This is a description of how they were completed.
+The laboration assignment consisted of several tasks that needed to be completed. This is a description of how they were completed.
 
 \section{Calibration}
 \label{Calibration}
@@ -106,7 +106,7 @@ The calibration setup described in chapter \ref{Data gathering} in figure \ref{c
 \begin{verbatim}
 e = tphat(:,1) - mean(tphat, 2);
 \end{verbatim}
-The same has to be done for the other 6 sensors. The meaning of this is that the mean of the seven sensors at one time instant should be close to the actual value of the arrival time. Since they are placed at en equal distance the arrival time should be the same, but since they are not, we need to compare the measurements to the mean of the sensors, which produces the error.
+The same has to be done for the other 6 sensors. The meaning of this is that the mean value of the seven sensors at one time instant should be close to the actual value of the arrival time. Since they are placed at en equal distance the arrival time should ideally be the same, but since they are not, we need to compare the measurements to the mean of the sensors, which produces the error $e$ as seen above.
 
 To compare the empirical probability density function of the measurement noise with a pdfclass distribution, we need to compute a normalized histogram first. This can be achieved using the following code.
 \begin{verbatim}
@@ -140,7 +140,7 @@ This code also plotts a pdfclass distribution into the same graph for comparison
   \caption{Histogram and pdfclass distribution for each sensor}
   \label{histogram}
 \end{figure}
-The mean of the standard deviatione is $0.0613$ meters, which can be regarded as the accuracy of the estimation.
+The mean of the standard deviation is $0.0613$ meters, which can be regarded as the accuracy of the estimation.
 
 
 
@@ -150,7 +150,7 @@ The mean of the standard deviatione is $0.0613$ meters, which can be regarded as
 To do localisation and tracking, a model must be used to process the data in the datasets.
 The algorithms used in this laboration need a function that maps the state of the robot to the measurments that has been recorded.
 An important observation is that the time when the pulse was emitted from the robot is not known.
-This means that either this time has to be estimated as a stat of the robot or that it is eliminated by using the differences of the arrival times in the microphones.
+This means that either the time has to be estimated as a state of the robot or that it is eliminated by using the differences of the arrival times in the microphones.
 This gives two different sensor models.
 In the sensormod toolbox that is used in the course these are reffered to as \emph{TDOA1} and \emph{TDOA2} respectively.
 The TDOA1 model can be described using a three dimensional state variabel $x = [p^T, r_0]^T$ 
@@ -280,7 +280,7 @@ sm.pe = repmat(yy_var, sm.nn(3), 1).*eye(sm.nn(3));
 \newpage
 \section{Configuration analysis}
 \label{Configuration analysis}
-A configuration analysis is done to see which of the microphone configurations is better.
+A configuration analysis is done to see which one of the microphone configurations is better.
 Two methods are used.
 
 The first method is to calculate the NLS loss function $V(\bar{x}) = \bar{y} - h(\bar{x}))^TR^{-1}(\bar{y} - h(\bar{x}))$ for one of the measurments.
@@ -289,14 +289,14 @@ A distinct minimum would indicate a good configuration.
 The result for the first configuration can be seen in figure \ref{nls_good}.
 The result for the second configuration can be seen in figure \ref{nls_bad}.
 The first configuration has a good looking shape that circle the position where the robot probably is.
-The second configuration does not have a good minimum the loss function seems to bleed out outside the track.
+The second configuration does not have a good minimum. The loss function seems to bleed out outside the track.
 
 The second method used is the Cramer-Rao lower bound. This is a function which gives the lower bound for the root mean square error (RMSE) of a sensor network.
-This is a lower bound for how good the approximation can be using the sensors present given the true position of the robot is in a point of the track.
+This is a lower bound for how good the approximation can be using the sensors present, given the true position of the robot is in a point of the track.
 The result for the first configuration can be seen in figure \ref{crlb_good} and the second in figure \ref{crlb_bad}.
 The unit in the plots are meters.
-Here the first configuration has very small values all over the track, the RMSE is below 1 dm everywhere.
-The second configuration is a lot worse. Some parts of the track where the robot will be going is as high as 1 meter.
+Here the first configuration has got very small values all over the track, the RMSE is below 1 dm everywhere.
+The second configuration is a lot worse. Some parts of the track where the robot will be going the RMSE is as high as 1 meter.
 
 The conclusion from this part is that the first configuration is a lot better than the second.
 From now on only the first configuration will be used.
@@ -526,14 +526,14 @@ The size of this error is probably a few centimeters.
 The standard deviation of the pulse arrival times calculated in the calibration task were about 6 centimeters (if they are modified to correspond to lengths).
 This means that the error of the measurements is about the same size or probably smaller than the standard deviation of the pulse detection.
 
-To see how noise in the placement of the sensors affect the estimations additive gaussian noise was added to the positions of the sensors in the sensor model.
+To see how noise in the placement of the sensors affect the estimations, additive gaussian noise was added to the positions of the sensors in the sensor model.
 When the standard deviation of the noise is 5 cm the effect on the estimation is small, at around 10 cm the estimations get worse.
 Figure \ref{sens_5} and figure \ref{sens_10} shows how the noise affect the constant velocity motion model with the particle filter.
-This model uses one sensor as reference and uses the differencies to the other sensors as measurements.
+This model uses one sensor as reference and uses the differences to the other sensors as measurements.
 This makes it more sensitive to errors in the reference sensor.
-When the reference sensor is moved 10 cm the the error can be seen in the estimations (figure \ref{ref_10}.
-On the other hand if a sensor that is not the reference is moved 50 cm the result is a bit wrong,
-but not much compared to if the reference microphone is moved in the same way.
+When the reference sensor is moved 10 cm, the error can be seen in the estimations (figure \ref{ref_10}.
+On the other hand if a sensor that is not the reference is moved 50 cm the result is only a bit wrong,
+but not much compared to when the reference microphone is moved in the same way.
 The difference can be seen in figure \ref{ref_50} and \ref{diff_50}
 
 \begin{figure}[H]
@@ -571,10 +571,8 @@ The difference can be seen in figure \ref{ref_50} and \ref{diff_50}
   \label{diff_50}
   \end{center}
 \end{figure}
-\newpage
-\section{Conclusion}
-\label{Conclusion}
 
+\newpage
 \chapter{Appendix}
 Appendix with most of the code used to get the result presented in the report.
 
