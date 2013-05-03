@@ -349,7 +349,35 @@ Using the time measurements and initial values contained in the sensor model, we
 
 \newpage
 \subsection{TDOA approach}
-\label{TDOA approach}
+\label{Pairwise difference approach}
+By setting up a matrix with the pairwise differences of the sensor measurements for all time instances, the ''TDOA2'' sensor model can be used to estimate the target position. To do so the measurements must be described as a ''sig'' object. This whole process is shown below for one time instance $m$.
+\begin{verbatim}
+    yy = [];
+    for k = 1:6,
+        for l = k+1:7,
+            yy = [yy tphat(m, k) - tphat(m,l)];
+        end
+    end
+\end{verbatim}
+ Then using a NLS-algorithm the target position for each time instant $m$ can be estimated. This can be achieved with the following code in matlab, which yields the figures below.
+ \begin{verbatim}
+    [shat, xhat] = nls(sm,sig(yy), 'thmask', zeros(sm.nn(4) ,1));
+    sig_yy = sig(yy);
+    x(:,m) = shat.x0;
+    x_cov(:,:,m) = cov(shat.px0);
+    sm.x0 = shat.x0;
+    plot(shat, 'conf', 90)
+ \end{verbatim}
+ \begin{figure}[H]
+   \label{TDOA_target_est1}
+   \includegraphics[width = 350pt]{TDAO_target_est1.png}
+   \caption{Pairwise measurement differences using TDOA2 showing confidence interval}
+ \end{figure}
+ \begin{figure}[H]
+   \label{TDOA_target_est2}
+   \includegraphics[width = 350pt]{TDAO_target_est1.png}
+   \caption{Pairwise measurement differences using TDOA2}
+ \end{figure}
 
 
 
@@ -360,6 +388,10 @@ Using the time measurements and initial values contained in the sensor model, we
 \newpage
 \section{Sensitivity analysis}
 \label{Sensitivity analysis}
+
+\newpage
+\section{Conclusion}
+\label{Conclusion}
 
 \chapter{Appendix}
 % .m code
