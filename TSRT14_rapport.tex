@@ -49,9 +49,9 @@ This was achived by placing all the microphones on a small segement of a circle 
 The robot was then setup to just emit the pulses and stay still. The setup is displayed in figure \ref{calibtration_setup} below.
 \begin{figure}[H]
 \begin{center}
-  \label{calibtration_setup}
   \includegraphics[width = 100pt]{calibration_setup.png}
   \caption{Calibration setup}
+  \label{calibtration_setup}
   \end{center}
 \end{figure}
 
@@ -69,15 +69,15 @@ The processing of the recordings are done by correlating the recorded signal wit
 This will give large peaks where the pulses were recorded.
 
 \begin{figure}[!h]
-  \label{good_setup}
   \includegraphics[scale=0.9]{microphone_pos_good.png}
   \caption{Microphone setup one.}
+  \label{good_setup}
 \end{figure}
 
 \begin{figure}[!h]
-  \label{bad_setup}
   \includegraphics[scale=0.9]{microphone_pos_bad.png}
   \caption{Microphone setup two.}
+  \label{bad_setup}
 \end{figure}
 
 \newpage
@@ -121,9 +121,9 @@ end
 \end{verbatim}
 This code also plotts a pdfclass distribution into the same graph for comparison. It also determines the bias and standard deviation for each sensor. 
 \begin{figure}[H]
-  \label{histogram}
   \includegraphics[width = 400pt]{histogram.png}
   \caption{Histogram and pdfclass distribution for each sensor}
+  \label{histogram}
 \end{figure}
 The mean of the standard deviatione is $0.0613$ meters, which can be regarded as the accuracy of the estimation.
 
@@ -341,17 +341,45 @@ SFlabCompEstimGroundTruth(est_target_pos, sensor_position');
 \end{verbatim}
 Using the time measurements and initial values contained in the sensor model, we can produce the output shown in the figure below.
 \begin{figure}[H]
-  \label{NLS_target_est}
   \includegraphics[width = 350pt]{NLS_target_est.png}
   \caption{NLS target estimation using Gauss-Newton}
+  \label{NLS_target_est}
 \end{figure}
 
 
 
 \newpage
 \subsection{TDOA approach}
-\label{TDOA approach}
-
+\label{Pairwise difference approach}
+By setting up a matrix with the pairwise differences of the sensor measurements for all time instances, the ''TDOA2'' sensor model can be used to estimate the target position. To do so the measurements must be described as a ''sig'' object. This whole process is shown below for one time instance $m$.
+\begin{verbatim}
+    yy = [];
+    for k = 1:6,
+        for l = k+1:7,
+            yy = [yy tphat(m, k) - tphat(m,l)];
+        end
+    end
+\end{verbatim}
+ Then using a NLS-algorithm the target position for each time instant $m$ can be estimated. This can be achieved with the following code in matlab, which yields the figures below.
+ \begin{verbatim}
+    [shat, xhat] = nls(sm,sig(yy), 'thmask', zeros(sm.nn(4) ,1));
+    sig_yy = sig(yy);
+    x(:,m) = shat.x0;
+    x_cov(:,:,m) = cov(shat.px0);
+    sm.x0 = shat.x0;
+    plot(shat, 'conf', 90)
+ \end{verbatim}
+ \begin{figure}[H]
+   \includegraphics[width = 350pt]{TDAO_target_est1.png}
+   \caption{Pairwise measurement differences using TDOA2 showing confidence interval}
+   \label{TDOA_target_est1}
+ \end{figure}
+ \begin{figure}[H]
+   \includegraphics[width = 350pt]{TDAO_target_est2.png}
+   \caption{Pairwise measurement differences using TDOA2}
+   \label{TDOA_target_est2}
+ \end{figure}
+Figure \ref{TDOA_target_est2} compared to figure \ref{NLS_target_est} yields that the TDOA method with the pairwise differences gives a better estimate of the target positions. 
 
 
 \newpage
@@ -475,6 +503,10 @@ The sensor noise variance was had to be adjusted to be a little bigger than esti
 \newpage
 \section{Sensitivity analysis}
 \label{Sensitivity analysis}
+
+\newpage
+\section{Conclusion}
+\label{Conclusion}
 
 \chapter{Appendix}
 % .m code
