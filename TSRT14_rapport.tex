@@ -12,6 +12,7 @@
 \usepackage{float}
 \usepackage{url}
 \usepackage[numbered]{mcode}
+\usepackage[top=4cm, bottom=4cm, left=4cm, right=4cm]{geometry}
 
 \lstset{extendedchars=\true}
 \lstset{inputencoding=ansinew}
@@ -384,7 +385,121 @@ Figure \ref{TDOA_target_est2} compared to figure \ref{NLS_target_est} yields tha
 \newpage
 \section{Tracking}
 \label{Tracking}
+In the localisation task, measured data was used to estimate the position of the robot in the track.
+Each of the pulses the robot sent during its path around the track was used independently to give an estimate of the robot at a single time instance.
+This is not the best that can be achieved. We know that it is a robot that moves relatively slowly around a track.
+The position at each time instance is not independent of the others.
+This can be used to make better estimates of the position of the robot.
 
+To do tracking a motion model is used to describe the dependence between different measurements.
+Two different motion models was used. Each of the two models were implemented using two different techniques.
+
+The first model is usually called the constant velocity model.
+The robot is modeled to move with constant velocity, model noise is then added to account for changes in velocity.
+This requires four states to describe the robot.
+$\bar{x} = [x1, x2, v1, v2]^T$ where $[x1, x2]^T$ is the position of the robot and $[v1, v2]$ is the speed in each direction.
+With $T = 0.5$ seconds between each measurement the constant velocity motion model can be written
+
+\[
+  \bar{x}[k+1] = 
+  \begin{bmatrix}
+    1 & 0 & \frac{T}{2} & 0 \\
+    0 & 1 & 0 & \frac{T}{2} \\
+    0 & 0 & 1 & 0 \\
+    0 & 0 & 0 & 1 \\
+  \end{bmatrix}
+  \bar{x}[k] + \bar{v}
+\]
+The model noise $\bar{v}$ is considered independent and with zero variance in the position states and equal variance $\sigma_v^2$ in both the velocity states.
+$\bar{v} = [0, 0, \sigma_v^2, \sigma_v^2]^T$
+
+The second model that was used is the constant acceleration model.
+The robot is considered to move under constant acceleration. This gives a similar model to the one before but with two more states than before.
+The model noise is now put in the acceleration states.
+$\bar{x} = [x1, x2, v1, v2, a1, a2]^T$ where $[x1, x2]^T$ is the position of the robot and $[v1, v2]$ is the speed in each direction exactly as before.
+$[a1, a2]$ is the new states that describes the acceleration of the robot.
+The model can be written
+
+\[
+  \bar{x}[k+1] = 
+  \begin{bmatrix}
+    1 & 0 & T & 0 & T*2 & 0\\
+    0 & 1 & 0 & T & 0 & T*2\\
+    0 & 0 & 1 & 0 & T & 0\\
+    0 & 0 & 0 & 1 & 0 & T\\
+    0 & 0 & 0 & 0 & 1 & 0\\
+    0 & 0 & 0 & 0 & 0 & 1\\
+  \end{bmatrix}
+  \bar{x}[k] + \bar{v}
+\]
+The model noise is now put in the acceleration states and are independent $\bar{v} = [0, 0, 0, 0, \sigma_a^2, \sigma_a^2]^T$.
+
+To use theses two models to make better estimates two different methods were used.
+The first approach is to use a Kalman filter and use the estimates and their covariances from the localisation task.
+Since the covariances of the measurement varies the Kalman filter uses different R covariances for different k.
+The Kalman filter is used to filter the artificial measurments from the localisation algorithm together with the estimates of their covariances.
+This gives trajectories that can be seen in figure \ref{kf_all}.
+Figure \ref{kf_CV} and figure \ref{kf_CA} shows the estimated locations for the constant velocity and constant acceleration repectively.
+The variances used for these plots are $\sigma_v^2 = 0.004$ and $\sigma_a^2 = 0.01$
+
+The second approach used was to implement a particle filter with the TDOA2 model using one sensor as a reference.
+This means that for one sensor the six differences to the other 6 sensors were calculated and used as measurement data.
+The particle fitler used 10,000 particles and the same noise variances as the Kalman filter.
+Both motion models were used and the resulting trajectories can be seen in figure \ref{pf_all}.
+Figure \ref{pf_CV} and \ref{pf_CA} shows the estimated positions for constant velocity and constant acceleration ploted with a picture of the track.
+
+Both the filtering techniques gives better result than just doing localisation alone.
+For both the methods the constant velocity model seems to be more sensitive to noise, it is harder to get a smooth trajectory and still have a quick enough filter.
+The Kalman filter estimated trajectories looks a bit better than those produced by the particle filter.
+This can be the result of many different things. The TDOA2 model with one reference microphone was not used to do pure localisation.
+Hence the aritificial measurements used in the Kalman filter were produced using the TDOA2 model with all the pairwise differences.
+Two different signal models were used in the Kalman filter and the particle filter this might be the reason for the difference between them.
+The trajectory produced by the particle filter was often more noisy.
+There was also some problems with convergence of the particle filter.
+The sensor noise variance was had to be adjusted to be a little bigger than estimated to make sure that the filter did converge.
+
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{kf_all.png}
+  \caption{Trajectories after Kalman filtering.}
+  \label{kf_all}
+  \end{center}
+\end{figure}
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{kf_CV.png}
+  \caption{Estimated positions with the constant velocity model and KF.}
+  \label{kf_CV}
+  \end{center}
+\end{figure}
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{kf_CA.png}
+  \caption{Estimated positions with the constant acceleration model and KF.}
+  \label{kf_CA}
+  \end{center}
+\end{figure}
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{pf_all.png}
+  \caption{Trajectories after particle filtering.}
+  \label{pf_all}
+  \end{center}
+\end{figure}
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{pf_CV.png}
+  \caption{Estimated positions with the constant velocity model and PF.}
+  \label{pf_CV}
+  \end{center}
+\end{figure}
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[width = 350pt]{pf_CA.png}
+  \caption{Estimated positions with the constant acceleration model and PF.}
+  \label{pf_CA}
+  \end{center}
+\end{figure}
 \newpage
 \section{Sensitivity analysis}
 \label{Sensitivity analysis}
