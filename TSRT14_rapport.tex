@@ -16,6 +16,21 @@
 
 \lstset{extendedchars=\true}
 \lstset{inputencoding=ansinew}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\lstset{
+  title=\lstname,
+  frame=t,
+  basicstyle=\footnotesize\ttfamily,
+  keywordstyle=\color{blue},          % keyword style
+  commentstyle=\color{dkgreen},       % comment style
+  stringstyle=\color{mauve},         % string literal style
+  showstringspaces=false,         % underline spaces within strings
+  tabsize=2,
+  language=Matlab,
+  xleftmargin=-1cm
+}
 
 
 
@@ -559,7 +574,16 @@ The difference can be seen in figure \ref{ref_50} and \ref{diff_50}
 
 \newpage
 \chapter{Appendix}
-% .m code
+Appendix with most of the code used to get the result presented in the report.
+
+\lstinputlisting{grid_loss.m}
+\lstinputlisting{NLS_using_Gauss.m}
+\lstinputlisting{localisation_TDOA2.m}
+\lstinputlisting{create_y_reference.m}
+\lstinputlisting{create_y_tdoa2.m}
+\lstinputlisting{ekf_script.m}
+\lstinputlisting{my_EKF.m}
+\lstinputlisting{particle_filter.m}
 
 \end{document}
 
