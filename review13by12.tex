@@ -1,0 +1,98 @@
+\documentclass[10pt,a4paper]{report} 
+% Style
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{lmodern} 
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{float}
+\usepackage{url}
+\usepackage[numbered]{mcode}
+\usepackage[top=4cm, bottom=4cm, left=4cm, right=4cm]{geometry}
+
+\lstset{extendedchars=\true}
+\lstset{inputencoding=ansinew}
+
+
+
+% ---Dokumen start---
+\begin{document}
+
+
+
+% ---Title page ---
+\title{Peer review on group 13 by group 12\\Sensor fusion -- TSRT14}
+\author{Group 12}
+\maketitle
+
+\newpage
+\section*{1}
+The datasets are well described, but the exact positioning of the sensors for the ''good'' and the ''bad'' alternative should be given explicitly here. Also a figure of the setup would be great.
+\begin{verbatim*}
+plot(sensormodel)
+\end{verbatim*}
+The procedures to acquire the the data are well described as well, but the used commands in matlab during the collection should also be mentioned, otherwise it will be hard for someone who has never done this, to actually acquire the data without fault.
+
+
+
+\section*{2}
+\subsection*{Task 1: Sensor calibration}
+Well explained and visualized with figure 1.1. Since it was an occurring issue, it would be good to clearly define the used values as distance or time. The values of the standard deviation and bias are clearly presented, although the standard deviation is called ''$varvalues_e$'', which might be confusing, since the standard deviation is $\sqrt{(var(e))}$ and not $var(e)$. 
+
+
+
+\subsection*{Task 2: Signal modeling}
+Sufficient description of used equations, matlab functions and model approaches. Also the colouring scheme of the matlab code is kept, which is a nice touch.
+
+
+
+\subsection*{Task 3: Experiments}
+All element in the figures are clearly visible, the axis have labels and the figures have good captions. For anyone who is unfamiliar with the toolbox, it would be helpful to have the code used to produce these figures.
+
+
+
+\subsection*{Task 4: Configuration analysis}
+The solutions are well described, but a excerpt of the code used to produce the figures would be helpful to anyone not familiar with the toolbox. The figures are very good, clearly visible graphs and values.
+
+
+
+\subsection*{Task 5: Localisation}
+Also very intuitive described solutions, but lacking code excerpts to illustrate how the task was solved. Optionally use 'SFlabCompEstimGroundTruth' to plot the target estimates, but the provided figures are also visualising the targets position very well.
+
+
+
+\subsection*{Task 6: Tracking}
+Again, very good description, but there should really be pieces of code showing how to solve this problem.
+
+
+
+\subsection*{Task 7: Sensitivity analysis}
+The task solution is well explained and the figure show a clear result of the disturbed sensormodel compared to the one from the previous exercise. To make the comparison even better, calculate the standard deviation between the two models, to help putting a number to the sensitivity. 
+
+
+
+\section*{3}
+Generally the conclusions were well supported by data and plots or results. However in some cases explicit numbers were missing, like in task 7, to press the dimension of the deviation after applying an disturbance to the sensor positions. Somewhere, the measured positions should also be mentioned.
+
+
+
+\section*{4}
+
+
+
+\section*{5}
+
+
+\end{document}
+
+
+
+%%% Local Variables: 
+%%% TeX-PDF-mode: t 
+%%% TeX-master: "rapport"
+%%% End: 
+
